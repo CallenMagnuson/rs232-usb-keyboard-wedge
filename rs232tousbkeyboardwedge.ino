@@ -12,7 +12,7 @@
 // Shift (left shift): Decimal 144 - Hex 90
 // Tab: Decimal 157 - Hex 9D
 
-const unsigned int MAX_MESSAGE_LENGTH = 5;
+const unsigned int MAX_MESSAGE_LENGTH = 8;
 
 #define rxPin 11
 #define txPin 10
@@ -32,11 +32,6 @@ void setup() {
 }
 
 void loop() {
- digitalWrite(LED_BUILTIN,HIGH);
- delay(10);
- digitalWrite(LED_BUILTIN,LOW);
- delay(20);
- //Serial.println("Loop Start");
 
  //Check to see if anything is available in the serial receive buffer
  while (mySerial.available() > 0)
@@ -73,8 +68,6 @@ void loop() {
         //Unused ASCII space is being used to receive control keys 
         // Decimal 129 - Hex 81 
         Keyboard.press(KEY_LEFT_CTRL);
-        digitalWrite(LED_BUILTIN,HIGH);
-        delay(50);
         Serial.println("CTRL Pressed");
       }
       else if (message[n] == (char)141)
@@ -82,8 +75,6 @@ void loop() {
         //Unused ASCII space is being used to receive control keys 
         // Decimal 141 - Hex 8D 
         Keyboard.press(KEY_LEFT_ALT);
-        digitalWrite(LED_BUILTIN,HIGH);
-        delay(50);
         Serial.println("ALT Pressed");
       }
       else if (message[n] == (char)143)
@@ -91,8 +82,6 @@ void loop() {
         //Unused ASCII space is being used to receive control keys 
         // Decimal 143 - Hex 8F 
         Keyboard.press(KEY_LEFT_GUI);
-        digitalWrite(LED_BUILTIN,HIGH);
-        delay(50);
         Serial.println("GUI Key Pressed");
       }
       else if (message[n] == (char)144)
@@ -100,8 +89,6 @@ void loop() {
         //Unused ASCII space is being used to receive control keys 
         // Decimal 144 - Hex 90 
         Keyboard.press(KEY_LEFT_SHIFT);
-        digitalWrite(LED_BUILTIN,HIGH);
-        delay(50);
         Serial.println("Shift Pressed");
       }
       else if (message[n] == (char)157)
@@ -109,24 +96,19 @@ void loop() {
         //Unused ASCII space is being used to receive control keys 
         // Decimal 157 - Hex 9D 
         Keyboard.press(KEY_TAB);
-        digitalWrite(LED_BUILTIN,HIGH);
-        delay(50);
         Serial.println("Tab Pressed");
       }
       else
       {
         //Send an ASCII character within the used character space
         Keyboard.press((char)n);
-        digitalWrite(LED_BUILTIN,HIGH);
-        delay(50);
         Serial.print((char)n);
         Serial.println(" Pressed");
       }
      }
 
      //Reset for the next message
-     digitalWrite(LED_BUILTIN,LOW);
-     delay(25);
+     delay(10);
      Keyboard.releaseAll();
      Serial.println("Keys Released");
      mySerial.println("OK");
