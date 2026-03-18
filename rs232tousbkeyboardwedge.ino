@@ -61,7 +61,7 @@ void loop() {
      Serial.print("Message Received: ");
      Serial.println(message);
 
-     for (int n = 0; n <= message_pos; n++)
+     for (int n = 0; n < message_pos - 1; n++)
      {
       if (message[n] == (char)129)
       {
