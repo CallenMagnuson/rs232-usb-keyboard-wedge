@@ -12,10 +12,10 @@
 // Shift (left shift): Decimal 144 - Hex 90
 // Tab: Decimal 157 - Hex 9D
 
-const unsigned int MAX_MESSAGE_LENGTH = 12;
+const unsigned int MAX_MESSAGE_LENGTH = 5;
 
-#define rxPin 0
-#define txPin 1
+#define rxPin 11
+#define txPin 10
 #define invert 1
 
 // Set up a new SoftwareSerial object
@@ -24,9 +24,10 @@ SoftwareSerial mySerial =  SoftwareSerial(rxPin, txPin, invert);
 void setup() {
   // Define pin modes for TX and RX
   pinMode(rxPin, INPUT);
-  pinMode(txPin, OUTPUT);  Serial.begin(9600);
+  pinMode(txPin, OUTPUT);
   mySerial.begin(9600);
-
+  mySerial.setTimeout(100);
+  Serial.begin(9600);
   pinMode(LED_BUILTIN, OUTPUT);
 }
 
@@ -35,10 +36,12 @@ void loop() {
  delay(10);
  digitalWrite(LED_BUILTIN,LOW);
  delay(20);
+ //Serial.println("Loop Start");
 
  //Check to see if anything is available in the serial receive buffer
  while (mySerial.available() > 0)
  {
+   Serial.println("Serial Packet Begin");
    //Create a place to hold the incoming message
    static char message[MAX_MESSAGE_LENGTH];
    static unsigned int message_pos = 0;
@@ -63,11 +66,9 @@ void loop() {
      Serial.print("Message Received: ");
      Serial.println(message);
 
-     int message_size = message_pos;
-
-     for (int n = 0; n <= message_size; n++)
+     for (int n = 0; n <= message_pos; n++)
      {
-      if (message[n] == 129)
+      if (message[n] == (char)129)
       {
         //Unused ASCII space is being used to receive control keys 
         // Decimal 129 - Hex 81 
@@ -76,7 +77,7 @@ void loop() {
         delay(50);
         Serial.println("CTRL Pressed");
       }
-      else if (message[n] == 141)
+      else if (message[n] == (char)141)
       {
         //Unused ASCII space is being used to receive control keys 
         // Decimal 141 - Hex 8D 
@@ -85,7 +86,7 @@ void loop() {
         delay(50);
         Serial.println("ALT Pressed");
       }
-      else if (message[n] == 143)
+      else if (message[n] == (char)143)
       {
         //Unused ASCII space is being used to receive control keys 
         // Decimal 143 - Hex 8F 
@@ -94,7 +95,7 @@ void loop() {
         delay(50);
         Serial.println("GUI Key Pressed");
       }
-      else if (message[n] == 144)
+      else if (message[n] == (char)144)
       {
         //Unused ASCII space is being used to receive control keys 
         // Decimal 144 - Hex 90 
@@ -103,7 +104,7 @@ void loop() {
         delay(50);
         Serial.println("Shift Pressed");
       }
-      else if (message[n] == 157)
+      else if (message[n] == (char)157)
       {
         //Unused ASCII space is being used to receive control keys 
         // Decimal 157 - Hex 9D 
@@ -127,6 +128,8 @@ void loop() {
      digitalWrite(LED_BUILTIN,LOW);
      delay(25);
      Keyboard.releaseAll();
+     Serial.println("Keys Released");
+     mySerial.println("OK");
      message_pos = 0;
    }
  }
