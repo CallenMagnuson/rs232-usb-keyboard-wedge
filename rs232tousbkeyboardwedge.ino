@@ -1,8 +1,9 @@
 #include <Keyboard.h>
 #include <KeyboardLayout.h>
+#include <SoftwareSerial.h>
 
 // Built for Arduino Leonardo (ATMega32U4) and tested on DFRobot's Beetle Board - SKU: DFR0282
-// Serial1 is connected to the TX/RX pads on the bottom of the board (Pins 0 and 1 on the Leonardo) and receives RS-232 data to interpret
+// mySerial is connected to the TX/RX pads on the bottom of the board (Pins 0 and 1 on the Leonardo) and receives RS-232 data to interpret
 // This is made primarily to type keyboard shortcuts and will press every key sent to the buffer before releasing. This means that any text you wish to type needs to be sent with a \n between each character.
 // The following modifier key assignments are defined:
 // CTRL (left ctrl): Decimal 129 - Hex 81
@@ -13,9 +14,19 @@
 
 const unsigned int MAX_MESSAGE_LENGTH = 12;
 
+#define rxPin 0
+#define txPin 1
+#define invert 1
+
+// Set up a new SoftwareSerial object
+SoftwareSerial mySerial =  SoftwareSerial(rxPin, txPin, invert);
+
 void setup() {
-  Serial.begin(9600);
-  Serial1.begin(9600);
+  // Define pin modes for TX and RX
+  pinMode(rxPin, INPUT);
+  pinMode(txPin, OUTPUT);  Serial.begin(9600);
+  mySerial.begin(9600);
+
   pinMode(LED_BUILTIN, OUTPUT);
 }
 
@@ -26,14 +37,14 @@ void loop() {
  delay(20);
 
  //Check to see if anything is available in the serial receive buffer
- while (Serial1.available() > 0)
+ while (mySerial.available() > 0)
  {
    //Create a place to hold the incoming message
    static char message[MAX_MESSAGE_LENGTH];
    static unsigned int message_pos = 0;
 
    //Read the next available byte in the serial receive buffer
-   char inByte = Serial1.read();
+   char inByte = mySerial.read();
 
    //Message coming in (check not terminating character) and guard for over message size
    if ( inByte != '\n' && (message_pos < MAX_MESSAGE_LENGTH - 1) )
