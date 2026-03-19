@@ -11,6 +11,7 @@ Unused ASCII space is used for modifier keys with the following keys defined:\
 - ALT (left alt): Decimal 141 - Hex 8D
 - OS Key (left Windows/OS): Decimal 143 - Hex 8F
 - Shift (left shift): Decimal 144 - Hex 90
-- Tab: Decimal 157 - Hex 9D
+- Tab: Decimal 157 - Hex 9D\
+
 \
 Other ASCII characters will be typed as received.
