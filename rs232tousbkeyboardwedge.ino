@@ -2,16 +2,23 @@
 #include <SoftwareSerial.h>
 
 // Built for Arduino Leonardo (ATMega32U4) and tested on DFRobot's Beetle Board - SKU: DFR0282
-// mySerial is connected to the TX/RX pads on the bottom of the board (Pins 0 and 1 on the Leonardo) and receives RS-232 data to interpret
-// This is made primarily to type keyboard shortcuts and will press every key sent to the buffer before releasing. This means that any text you wish to type needs to be sent with a \n between each character.
-// The following modifier key assignments are defined:
+// Written by Callen Magnuson and released into the public domain.
+
+// mySerial is connected to digital pins 10 and 11 on the Leonardo and receives RS-232 data to interpret
+// Keyboard shortcuts are pressed if a modifier key is sent in the first position. Otherwise text is typed normally.
+
+// Data is expected to come in as ASCII data starting with your first key press. If using modifier keys, data will need to be sent in hexidecimal.
+// End of packet is expected to be a newline ("\n" or hex "0d0a").
+// Define your maximum packet size with MAX_MESSAGE_LENGTH
+
+// The following modifier key assignments are defined within unused portions of the ASCII table.
 // CTRL (left ctrl): Decimal 129 - Hex 81
 // ALT (left alt): Decimal 141 - Hex 8D
 // OS Key (left Windows/OS): Decimal 143 - Hex 8F
 // Shift (left shift): Decimal 144 - Hex 90
 // Tab: Decimal 157 - Hex 9D
 
-const unsigned int MAX_MESSAGE_LENGTH = 8;
+const unsigned int MAX_MESSAGE_LENGTH = 32;
 
 // Define serial pins and inversion
 #define rxPin 11
@@ -101,10 +108,21 @@ void loop() {
       }
       else
       {
-        // Send an ASCII character within the used character space
-        Keyboard.press((char)message[n]);
-        Serial.print((char)message[n]);
-        Serial.println(" Pressed");
+        // Check to see if the first position of the serial input is a modifier, if not, then we press and release the key to type normally
+        if (message[0] == (char)157 || message[0] == (char)144 || message[0] == (char)143 || message[0] == (char)141 || message[0] == (char)129)
+        {
+          Keyboard.press((char)message[n]);
+          Keyboard.release((char)message[n]);
+          Serial.print((char)message[n]);
+          Serial.println(" Typed");
+        }
+        else
+        {
+          // Send an ASCII character within the used character space
+          Keyboard.press((char)message[n]);
+          Serial.print((char)message[n]);
+          Serial.println(" Pressed");
+        }
       }
      }
 
